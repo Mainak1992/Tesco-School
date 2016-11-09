@@ -2,8 +2,8 @@
 
 import React from 'react';
 import ReactDOM from 'react-dom';
-import AppRoutes from './components/AppRoutes';
+import EmployeeBasePage from './components/EmployeeBasePage';
 
 window.onload = () => {
-  ReactDOM.render(<AppRoutes/>, document.getElementById('main'));
+  ReactDOM.render(<EmployeeBasePage/>, document.getElementById('main'));
 };

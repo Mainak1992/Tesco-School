@@ -6,8 +6,12 @@ const webpack = require('webpack');
 const path = require('path');
 
 module.exports = {
-  devtool: debug ? 'inline-sourcemap' : null,
-  entry: path.join(__dirname, 'src', 'app-client.js'),
+  debug: true,
+  devtool: 'cheap-module-eval-source-map',
+  entry: [
+    'eventsource-polyfill', // necessary for hot reloading with IE
+    'webpack-hot-middleware/client?reload=true',
+    path.join(__dirname, 'src', 'app-client.js')],
   devServer: {
     inline: true,
     port: 3333,
@@ -19,28 +23,13 @@ module.exports = {
     publicPath: "/js/",
     filename: 'bundle.js'
   },
+  plugins: [
+    new webpack.HotModuleReplacementPlugin(),
+    new webpack.NoErrorsPlugin()
+  ],
   module: {
     loaders: [{
-      test: path.join(__dirname, 'src'),
-      loader: ['babel-loader'],
-      query: {
-        cacheDirectory: 'babel_cache',
-        presets: debug ? ['react', 'es2015', 'react-hmre'] : ['react', 'es2015']
-      }
+      test: /\.js$/, include: path.join(__dirname, 'src'), loaders: ['babel-loader']
     }]
-  },
-  plugins: debug ? [] : [
-    new webpack.DefinePlugin({
-      'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV)
-    }),
-    new webpack.optimize.DedupePlugin(),
-    new webpack.optimize.OccurenceOrderPlugin(),
-    new webpack.optimize.UglifyJsPlugin({
-      compress: { warnings: false },
-      mangle: true,
-      sourcemap: false,
-      beautify: false,
-      dead_code: true
-    }),
-  ]
+  }
 };
